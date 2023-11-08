@@ -6,7 +6,7 @@ import {useSelector} from 'react-redux';
 import {useNavigate} from 'react-router-dom';
 
 export default function CreateListing() {
-    const {currentUser} = useSelector(state => state.user);
+    const {currentUser} = useSelector((state) => state.user);
     const navigate = useNavigate();
     const [files, setFiles] = useState([]);
     const [formData, setFormData] = useState({
@@ -45,7 +45,8 @@ export default function CreateListing() {
                 setImageUploadError(false);
                 setUploading(false);
                 
-            }).catch((err) => {
+            })
+            .catch((err) => {
                 setImageUploadError('Image upload failed (2 mb max per image)');
                 setUploading(false);
             });      
@@ -92,15 +93,19 @@ export default function CreateListing() {
         if(e.target.id === 'sale' || e.target.id === 'rent'){
             setFormData({
                 ...formData,
-                type: e.target.id
+                type: e.target.id,
             });
         }
 
-        if(e.target.id === 'parking' || e.target.id === 'furnished' || e.target.id === 'offer'){
+        if(
+            e.target.id === 'parking' ||
+            e.target.id === 'furnished' ||
+            e.target.id === 'offer'
+            ){
             setFormData({
                 ...formData,
-                [e.target.id]: e.target.checked
-            })
+                [e.target.id]: e.target.checked,
+            });
         }
 
         if (
@@ -118,8 +123,10 @@ export default function CreateListing() {
     const handleSubmit = async (e) =>{
         e.preventDefault();
         try {
-            if(formData.imageUrls.length < 1) return setError('You must upload atleast one image');
-            if(+formData.regularPrice < +formData.discountPrice) return setError('Discount price must be lower than regular price');
+            if(formData.imageUrls.length < 1)
+             return setError('You must upload atleast one image');
+            if(+formData.regularPrice < +formData.discountPrice)
+             return setError('Discount price must be lower than regular price');
             setLoading(true);
             setError(false);
             const res = await fetch('/api/listing/create', {
@@ -176,7 +183,8 @@ export default function CreateListing() {
                             <span>Sell</span>
                         </div>
                         <div className='flex gap-2'>
-                            <input type="checkbox" id='rent' className='w-5' onChange={handleChange}
+                            <input type="checkbox" id='rent' className='w-5'
+                             onChange={handleChange}
                             checked={formData.type === 'rent'} />
                             <span>Rent</span>
                         </div>
@@ -204,35 +212,46 @@ export default function CreateListing() {
                             <input type='number' id='bedrooms' min='1' max='10' required
                             className='p-3 border border-gray-300 rounded-lg' 
                             onChange={handleChange}
-                            checked={formData.bedrooms}/>
+                            value={formData.bedrooms}/>
                             <p>Beds</p>
                         </div>
                         <div className="flex items-center gap-2">
                             <input type='number' id='bedrooms' min='1' max='10' required
                             className='p-3 border border-gray-300 rounded-lg' 
                             onChange={handleChange}
-                            checked={formData.bathrooms}/>
+                            value={formData.bathrooms}/>
                             <p>Baths</p>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <input type='number' id='regulaPrice' min='50' max='1000000' required
-                            className='p-3 border border-gray-300 rounded-lg' 
-                            onChange={handleChange}
-                            checked={formData.regularPrice}/>
-                            <div className="flex flex-col items-center">
-                                <p>Regular Price</p>
+                        <div className='flex items-center gap-2'>
+                            <input
+                                type='number'
+                                id='regularPrice'
+                                min='50'
+                                max='10000000'
+                                required
+                                className='p-3 border border-gray-300 rounded-lg'
+                                onChange={handleChange}
+                                value={formData.regularPrice}
+                            />
+                            <div className='flex flex-col items-center'>
+                                <p>Regular price</p>
+                                {formData.type === 'rent' && (
                                 <span className='text-xs'>($ / month)</span>
+                                )}
                             </div>
                         </div>
                         {formData.offer && (
                             <div className="flex items-center gap-2">
-                                <input type='number' id='discountPrice' min='0' max='1000000' required
+                                <input type='number' id='discountPrice' min='0' max='10000000' required
                                 className='p-3 border border-gray-300 rounded-lg' 
                                 onChange={handleChange}
-                                checked={formData.discountPrice}/>
+                                value={formData.discountPrice}/>
                                 <div className="flex flex-col items-center">
                                     <p>Discounted Price</p>
+
+                                    {formData.type === 'rent' && (
                                     <span className='text-xs'>($ / month)</span>
+                                    )}
                                 </div>
                             </div>
                         )}
